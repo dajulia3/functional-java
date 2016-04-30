@@ -5,20 +5,23 @@ import org.junit.Test;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Fail.fail;
 
 public class ResultTest {
 
     private Function<Number, Result<String, Exception>> numberToStringResultFunc = n ->
-            Result.success(String.valueOf(n));;
+            Result.success(String.valueOf(n));
+    ;
     private Function<Number, String> numberToStringFunc = n -> String.valueOf(n);
+    private Result<String, Exception> successAbc = Result.<String, Exception>success("abc");
+    private Result<Integer, String> failureAbc = Result.<Integer, String>failure("abc");
+    private Result<String, Exception> failureOopsException = Result.<String, Exception>failure(new RuntimeException("oops."));
 
     @Test
     public void testMapSuccess() throws Exception {
-        Result<String, Exception> successResult = Result.<String, Exception>success("abc")
+        Result<String, Exception> successResult = successAbc
                 .mapSuccess(String::length)
                 .mapSuccess(numberToStringFunc);
-        Result<Integer, String> failureResult = Result.<Integer, String>failure("abc")
+        Result<Integer, String> failureResult = failureAbc
                 .mapSuccess(num -> num * 0);
 
         assertThat(successResult).isEqualTo(Result.success("3"));
@@ -27,7 +30,7 @@ public class ResultTest {
 
     @Test
     public void testMapFailure() {
-        Result<Void, Integer> failureResult = Result.<Void, String>failure("abc")
+        Result<Integer, Integer> failureResult = failureAbc
                 .mapFailure(Object::toString)
                 .mapFailure(String::length);
 
@@ -40,9 +43,9 @@ public class ResultTest {
 
     @Test
     public void testMap() {
-        Integer successResult = Result.success("abc")
+        Integer successResult = successAbc
                 .map(s -> 3, o -> 99);
-        Integer failureResult = Result.failure("abc")
+        Integer failureResult = failureAbc
                 .map(s -> 3, o -> 99);
 
         assertThat(successResult).isEqualTo(3);
@@ -50,27 +53,61 @@ public class ResultTest {
     }
 
     @Test
-    public void testFlatMap_whenFailure() {
-        RuntimeException error = new RuntimeException("oops");
-        Result<Integer, Exception> result = Result.<String, Exception>failure(error)
-                .flatMap(s -> Result.success(3));
+    public void testFlatMapSuccess() {
+        Result<String, Exception> successToMappedSuccess = successAbc
+                .flatMapSuccess(n -> Result.success(3))
+                .flatMapSuccess(n -> Result.success(n * 2))
+                .flatMapSuccess(numberToStringResultFunc);
 
-        assertThat(result).isEqualTo(Result.failure(error));
+        Result<String, Exception> successToFailure = successAbc
+                .flatMapSuccess(n -> failureOopsException);
+
+        Result<Integer, Exception> failureToSuccess = failureOopsException
+                .flatMapSuccess(s -> Result.success(3));
+
+        Result<Integer, Exception> failureToFailure = failureOopsException
+                .flatMapSuccess(s -> Result.success(3))
+                .flatMapSuccess(f -> Result.failure(new RuntimeException("some other exception")));
+
+        assertThat(successToMappedSuccess).isEqualTo(Result.success("6"));
+        assertThat(successToFailure).isEqualTo(failureOopsException);
+        assertThat(failureToSuccess).isEqualTo(failureOopsException);
+        assertThat(failureToFailure).isEqualTo(failureOopsException);
     }
 
     @Test
-    public void testFlatMap_whenSuccess() {
-        Result<String, Exception> result = Result.<String, Exception>success("YES")
-                .flatMap(n -> Result.success(3))
-                .flatMap(n -> Result.success(n * 2))
-                .flatMap()
-                .flatMap(numberToStringResultFunc);
-
-        assertThat(result).isEqualTo(Result.success("6"));
+    public void testFlatMapSuccess_whenStartingWithAFailure() {
     }
 
     @Test
-    public void fold(){
+    public void testFlatMapFailure() {
+        Result<String, Exception> successToSuccessResult = failureOopsException
+                .flatMapFailure(err -> Result.failure(3))
+                .flatMapFailure(n -> Result.failure(n * 2))
+                .flatMapFailure(numberToStringResultFunc);
 
+        Result<String, Exception> failureToSuccessResult = successAbc
+                .flatMapFailure(n -> failureOopsException);
+
+        Result<String, Exception> successToFailureResult = successAbc
+                .flatMapFailure(err -> failureOopsException);
+
+        Result<String, Integer> failureToMappedFailure = failureOopsException
+                .flatMapFailure(err -> Result.failure(22));
+        assertThat(successToSuccessResult).isEqualTo(Result.success("6"));
+        assertThat(successToFailureResult).isEqualTo(successAbc);
+        assertThat(failureToSuccessResult).isEqualTo(successAbc);
+        assertThat(failureToMappedFailure).isEqualTo(Result.failure(22));
+    }
+
+    @Test
+    public void fold() {
+        Boolean successResult = successAbc.fold(s -> true, f -> false);
+        Boolean failureResult = failureAbc.fold(s -> true, f -> false);
+        String successWithSuperTypeFunctionCompiles = Result.<Integer,Double>success(1).fold(numberToStringFunc , numberToStringFunc);
+        String failureWithSuperTypeFunctionCompiles = Result.<Integer,Double>failure(2.0).fold(numberToStringFunc , numberToStringFunc);
+
+        assertThat(successResult).isEqualTo(true);
+        assertThat(failureResult).isEqualTo(false);
     }
 }

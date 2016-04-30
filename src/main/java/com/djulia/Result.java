@@ -45,7 +45,7 @@ public class Result<S, F> {
         return failureTransform.apply(failure.get());
     }
 
-    public <T> Result<T, F> flatMap(Function<? super S, Result<T, F>> successMapper) {
+    public <T> Result<T, F> flatMapSuccess(Function<? super S, Result<T, F>> successMapper) {
         if(isFailure()){
             return Result.failure(failure.get());
         }
@@ -53,6 +53,12 @@ public class Result<S, F> {
         return successMapper.apply(success.get());
     }
 
+    public <T> Result<S, T> flatMapFailure(Function<? super F, Result<S, T>> failureMapper) {
+        if(isSuccess()){
+            return Result.success(success.get());
+        }
+        return failureMapper.apply(failure.get());
+    }
     @Override
     public String toString() {
         return "Result{" +
@@ -78,5 +84,12 @@ public class Result<S, F> {
         int result = success != null ? success.hashCode() : 0;
         result = 31 * result + (failure != null ? failure.hashCode() : 0);
         return result;
+    }
+
+    public <T> T fold(Function<? super S, T> successTransformer, Function<? super F, T> failureTransformer) {
+        if(isSuccess()){
+            return successTransformer.apply(success.get());
+        }
+        return failureTransformer.apply(failure.get());
     }
 }
