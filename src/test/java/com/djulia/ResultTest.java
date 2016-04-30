@@ -76,10 +76,6 @@ public class ResultTest {
     }
 
     @Test
-    public void testFlatMapSuccess_whenStartingWithAFailure() {
-    }
-
-    @Test
     public void testFlatMapFailure() {
         Result<String, Exception> successToSuccessResult = failureOopsException
                 .flatMapFailure(err -> Result.failure(3))
