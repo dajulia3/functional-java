@@ -1,6 +1,7 @@
 package com.djulia.result;
 
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Result<S, F> {
@@ -91,5 +92,13 @@ public class Result<S, F> {
             return successTransformer.apply(success.get());
         }
         return failureTransformer.apply(failure.get());
+    }
+
+    public void apply(Consumer<S> successConsumer, Consumer<F> failureConsumer) {
+        if(isSuccess()){
+            successConsumer.accept(success.get());
+            return;
+        }
+        failureConsumer.accept(failure.get());
     }
 }

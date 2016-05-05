@@ -1,12 +1,13 @@
 package com.djulia.result;
 
 
-import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 
 public class ResultTest {
 
@@ -75,6 +76,18 @@ public class ResultTest {
         assertThat(successToFailure).isEqualTo(failureOopsException);
         assertThat(failureToSuccess).isEqualTo(failureOopsException);
         assertThat(failureToFailure).isEqualTo(failureOopsException);
+    }
+
+    @Test
+    public void testApply(){
+        ArrayList<Boolean> successRecorder = new ArrayList<>();
+        ArrayList<Boolean> failureRecorder = new ArrayList<>();
+
+        Result.success("hey").apply(s-> successRecorder.add(true), f -> successRecorder.add(false));
+        Result.failure("hey").apply(s-> failureRecorder.add(true), f -> failureRecorder.add(false));
+
+        assertThat(successRecorder).containsExactly(true);
+        assertThat(failureRecorder).containsExactly(false);
     }
 
     @Test
