@@ -1,9 +1,27 @@
 group 'djulia'
 version '1.0-SNAPSHOT'
 
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath('io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE')
+    }
+}
+
+
 allprojects {
     repositories {
         mavenCentral()
+    }
+
+    apply plugin: 'io.spring.dependency-management'
+
+    dependencyManagement {
+        imports {
+            mavenBom 'io.spring.platform:platform-bom:2.0.3.RELEASE'
+        }
     }
 
     apply plugin: 'java'
@@ -11,5 +29,7 @@ allprojects {
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.11'
         testCompile 'org.assertj:assertj-core:3.4.1'
+
+//        compile 'org.springframework:spring-core' let's see if we need this..
     }
 }
