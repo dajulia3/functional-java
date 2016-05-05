@@ -1,4 +1,4 @@
-package com.djulia;
+package com.djulia.result;
 
 import java.util.Optional;
 import java.util.function.Function;

@@ -1,9 +1,8 @@
-package com.djulia;
+package com.djulia.either;
 import java.util.function.Function;
 
 
 import java.util.Optional;
-import java.util.function.Function;
 
 public class Either<L, R> {
     private final Optional<L> left;

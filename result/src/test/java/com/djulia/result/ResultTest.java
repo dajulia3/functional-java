@@ -1,5 +1,7 @@
-package com.djulia;
+package com.djulia.result;
 
+
+import org.assertj.core.api.AssertionsForClassTypes;
 import org.junit.Test;
 
 import java.util.function.Function;

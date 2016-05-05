@@ -1,7 +1,6 @@
-import com.djulia.Either;
-import org.junit.Test;
+package com.djulia.either;
 
-import java.util.function.Function;
+import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Fail.fail;
