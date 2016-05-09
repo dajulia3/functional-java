@@ -11,7 +11,18 @@ buildscript {
 }
 
 
+//TODO: Add degraph.
+
+subprojects{
+}
+
 allprojects {
+    apply plugin: 'idea'
+    apply plugin: 'java'
+
+    apply from: "$rootDir/gradle/jdepend.gradle"
+    ext.configDir = new File(rootDir, 'config')
+
     repositories {
         mavenCentral()
     }
@@ -24,11 +35,13 @@ allprojects {
         }
     }
 
-    apply plugin: 'java'
+
+
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.11'
         testCompile 'org.assertj:assertj-core:3.4.1'
+        testCompile("org.mockito:mockito-all:2.0.0-beta")
 
 //        compile 'org.springframework:spring-core' let's see if we need this..
     }
