@@ -4,9 +4,13 @@ version '1.0-SNAPSHOT'
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
     dependencies {
         classpath('io.spring.gradle:dependency-management-plugin:0.5.4.RELEASE')
+        classpath('net.sf.gapt:apt:1')
     }
 }
 
@@ -25,6 +29,7 @@ allprojects {
     }
 
     apply plugin: 'java'
+    apply plugin: 'net.sf.gapt'
 
     dependencies {
         testCompile group: 'junit', name: 'junit', version: '4.11'

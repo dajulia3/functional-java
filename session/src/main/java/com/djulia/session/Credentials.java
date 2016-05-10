@@ -1,46 +1,25 @@
 package com.djulia.session;
 
-public class Credentials {
-    private final String username;
-    private final String password;
+import com.google.auto.value.AutoValue;
 
-    public Credentials(String username, String password) {
-        this.username = username;
-        this.password = password;
+@AutoValue
+//@AutoValue.Builder
+public abstract class Credentials {
+//    static Credentials create(String username, String password) {
+//        return new AutoValue_Credentials(username, password);
+//    }
+
+    public static Builder builder() {
+        return new AutoValue_Credentials.Builder();
     }
 
-    public String getUsername() {
-        return username;
+    @AutoValue.Builder
+    public abstract static class Builder {
+        public abstract Builder username(String username);
+        public abstract Builder password(String password);
+        public abstract Credentials build();
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Credentials that = (Credentials) o;
-
-        if (username != null ? !username.equals(that.username) : that.username != null) return false;
-        return password != null ? password.equals(that.password) : that.password == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = username != null ? username.hashCode() : 0;
-        result = 31 * result + (password != null ? password.hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Credentials{" +
-                "password='" + password + '\'' +
-                ", username='" + username + '\'' +
-                '}';
-    }
+    public abstract String getUsername();
+    public abstract String getPassword();
 }

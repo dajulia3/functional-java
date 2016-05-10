@@ -12,6 +12,7 @@ public class AuthClient {
     }
 
     public Result<Boolean, Error> getUserAuth(com.djulia.session.Credentials credentials){
-        return restClient.getSomeResource().fold(success);
+        return null;
+//        return restClient.getSomeResource().fold(success);
     }
 }
